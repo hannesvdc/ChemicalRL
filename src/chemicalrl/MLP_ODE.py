@@ -14,6 +14,9 @@ class ODEState:
     V : pt.Tensor
     t : float
 
+    def toTensor(self) -> pt.Tensor:
+        return pt.stack((self.X, self.S, self.P, self.V), dim=1)
+
 class MonodLuedekingPiret:
 
     def __init__(self, 
@@ -33,7 +36,7 @@ class MonodLuedekingPiret:
             warnings.warn(f"Time Integration horizon {T} is not a multiple of the step size {dt}. Proceeding with int(T / dt) steps.")
 
         # Convert the state to a tensor
-        tensor_state = pt.stack((state.X, state.S, state.P, state.V), dim=1)
+        tensor_state = state.toTensor()
         for n in range(n_steps):
             tensor_state = self.rk4(tensor_state, F, dt)
         

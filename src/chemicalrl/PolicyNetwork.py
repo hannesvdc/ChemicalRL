@@ -1,7 +1,8 @@
 import torch as pt
 import torch.nn as nn
-
 import math
+
+from chemicalrl import ODEState
 
 class SimpleMLP (nn.Module) :
     def __init__(self, in_dim, out_dim, hidden=64):
@@ -31,8 +32,10 @@ class SquashedGaussianPolicyNetwork(pt.nn.Module):
 
         return mu, pt.exp(logstd)
     
-    def sampleActions(self, s):
-        mu, sigma = self.forward(s)
+    def sampleActions(self, s : ODEState):
+        mu, sigma = self.forward(s.toTensor())
+        mu = pt.flatten(mu)
+        sigma = pt.flatten(sigma)
         eps = pt.randn_like(mu)
         u = mu + eps * sigma
 

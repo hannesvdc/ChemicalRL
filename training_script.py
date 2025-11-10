@@ -1,7 +1,7 @@
 import torch as pt
 from torch.optim import Adam
 
-from chemicalrl import SquashedGaussianPolicyNetwork, MonodLuedekingPiret, ODEState
+from chemicalrl import MonodLuedekingPiret, SquashedGaussianPolicyNetwork, ODEState
 
 # The ODE model
 ode_parameters = {
