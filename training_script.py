@@ -1,8 +1,7 @@
 import torch as pt
 from torch.optim import Adam
 
-from PolicyNetwork import SquashedGaussianPolicyNetwork
-from MLP_ODE import MonodLuedekingPiret, ODEState
+from chemicalrl import SquashedGaussianPolicyNetwork, MonodLuedekingPiret, ODEState
 
 # The ODE model
 ode_parameters = {
@@ -10,7 +9,7 @@ ode_parameters = {
     "K_S":    0.10,   # g/L
     "alpha":  0.30,   # gP/gX
     "beta":   0.005,  # gP/gX/h
-    "S_f":    400.0,  # g/L (concentrated feed)
+    "S_f":    50.0,  # g/L (concentrated feed)
     "yield_X": 0.50,  # gX/gS
     "yield_P": 0.20,  # gP/gS
 }
@@ -34,18 +33,16 @@ def sampleInitialStates():
     S = ode_parameters["K_S"] * pt.ones_like(P)
     V = pt.ones_like(P) # V(t = 0) = 1 liter
     
-    min_logX = -3
-    max_logX = -1
-    logX = min_logX + (max_logX-min_logX) * pt.randn_like(P)
+    min_logX = -2
+    max_logX = 0
+    logX = min_logX + (max_logX-min_logX) * pt.rand_like(P)
     X = pt.exp(logX)
     return ODEState(X, S, P, V, 0.0)
-
 
 # Time stepping parameters
 dt = 0.01
 T = 1.0
 K = 100
-
 gamma = 0.995 # K \approx 1 / (1 - gamma)
 def loss_fn():
     # Build the rewards tensor

@@ -33,7 +33,7 @@ class MonodLuedekingPiret:
             warnings.warn(f"Time Integration horizon {T} is not a multiple of the step size {dt}. Proceeding with int(T / dt) steps.")
 
         # Convert the state to a tensor
-        tensor_state = pt.cat((state.X, state.S, state.P, state.V), dim=1)
+        tensor_state = pt.stack((state.X, state.S, state.P, state.V), dim=1)
         for n in range(n_steps):
             tensor_state = self.rk4(tensor_state, F, dt)
         
@@ -54,7 +54,7 @@ class MonodLuedekingPiret:
         dXdt = mu_S * X - F / V * X
         dSdt = - mu_S * X / self.parameters["yield_X"] - qP_S * X / self.parameters["yield_P"] + F / V * (self.parameters["S_f"] - S)
         dPdt = qP_S * X - F / V * P
-        return pt.cat((dXdt, dSdt, dPdt, dVdt), dim=1)
+        return pt.stack((dXdt, dSdt, dPdt, dVdt), dim=1)
     
     def rk4(self,
             tensor_state : pt.Tensor,
